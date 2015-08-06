@@ -1,0 +1,18 @@
+{
+"questions": [
+	{
+		"text": "Is a cat a dog?",
+		"type": "TorF",
+		"correct": "false"
+	},
+	{
+		"type": "MC",
+		"text": "How many legs does a fish have?",
+		"answers" : [
+			{"text" : "Zero", "correct":"true"},
+			{"text" : "One"},
+			{"text" : "Four"}
+		]
+	}
+]
+}

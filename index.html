@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- saved from url=(0080)file:///Users/ehigginsiii/Desktop/inkling-widgets/new_multiple_choice/index.html -->
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>
+<meta charset="UTF-8">
+<title>Multiple Choice Assessment Widget</title>
+<link rel="stylesheet" href="css/view.css">
+<!-- Multiple Choice Assessment Widget JS. -->
+<!-- <script src="js/view.js"></script> -->
+<script src="node_modules/angular/angular.js"></script>
+<!-- Load project font CSS -->
+<link rel="stylesheet" href="css/fonts/fonts.css">
+</head>
+<body ng-app="myApp">
+    <div ng-controller="mainController" class="widget_container">
+        <ul>
+            <li ng-repeat="q in questions" ng-switch on="q.type" myDirective id="q{{ $index + 1 }}">
+                <div  > 
+                    <div  class="question_stem">
+                        question: {{ q.text }} {{ q.type }}
+                    </div>
+                    <div id="answerImg"></div>
+                    <ul ng-switch-when="TorF" class="answer_set">
+                        <li>True</li>
+                        <li>False</li>            
+                    </ul>
+                    <ul ng-switch-when="MC"  class="answer_set">
+                        <li ng-repeat="a in q.answers">
+                            {{ a.text }}
+                        </li>
+                    </ul>
+                    <div class="feedback" style="height: 42px;">
+                        <div class="feedback_text feedback_hint" style="display: none;">
+                            <span>Hint</span>
+                            <p></p>
+                        </div>
+                        <div class="feedback_text feedback_incorrect" style="display: none;">
+                            <span>Not Quite</span>
+                            <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p>
+                        </div>
+                        <div class="feedback_text feedback_correct" style="display: block;">
+                            <span>That's Correct!</span>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="interactions">
+            <div class="answer_button reset">Reset Question</div>
+            <div class="help_buttons">
+                <span>Stuck?</span>
+                <span class="help show_hint disabled" style="display: none;">Get a hint!</span>
+                <span class="help show_answer disabled">Show Answer</span>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="js/app.js"></script>
+
+</body></html>
