@@ -3,7 +3,10 @@
 	{
 		"text": "Is a cat a dog?",
 		"type": "TorF",
-		"correct": "false"
+		"answers": [
+			{"text" : "True", "correct":"true"},
+			{"text" : "false"}
+		]
 	},
 	{
 		"type": "MC",
