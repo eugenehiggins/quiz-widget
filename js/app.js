@@ -2,8 +2,18 @@
 
 var quizApp = angular.module('quizApp',[]);
 
+//SERVICES
+
+quizApp.service('QuestionService', function() {
+
+	return {
+		questions: '',
+		currentQuestion: 0
+	};
+});
+
 //CONTROLLER
-quizApp.controller('mainController', function($scope, $http) {
+quizApp.controller('mainController', function($scope, $http, QuestionService) {
 
 	$scope.questions = [];
 
@@ -11,6 +21,7 @@ quizApp.controller('mainController', function($scope, $http) {
 		.then(function(response) {
 
 			$scope.questions = response.data.questions;
+			QuestionService.questions = $scope.questions;
 
 		}, function(response){
 			console.log('error');
@@ -18,11 +29,14 @@ quizApp.controller('mainController', function($scope, $http) {
 
 })
 
+
 //DIRECTIVES
-quizApp.directive('quizQuestion', function ($compile) {
+quizApp.directive('quizQuestion', function ($compile, QuestionService) {
 
 	var trueFalseTemplate = '<li> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <li class="answer answer1"><span class="enumeration">True</span></li> <li class="answer answer1"><span class="enumeration">False</span></li> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
-	var multiTemplate = '<li> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-repeat="a in question.answers" answer="a"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
+	var multiTemplate = '<li id="question-{{ key }}"> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
+
+	var qs = QuestionService;
 	
 	var getTemplate = function(questionType) {
 		var template = '';
@@ -30,7 +44,7 @@ quizApp.directive('quizQuestion', function ($compile) {
 			case 'TorF':
 			case 'MC':
 				template = multiTemplate;
-				console.log(template);
+
 				break;
 		}
 
@@ -38,8 +52,8 @@ quizApp.directive('quizQuestion', function ($compile) {
 	}
 
 	var linker = function (scope, element, attrs) {
-
-		element.html(getTemplate(scope.question.type));
+		console.log(scope);
+		element.html(getTemplate(qs.questions[qs.currentQuestion].question.type));
 		$compile(element.contents())(scope);
 	}
 
@@ -48,14 +62,39 @@ quizApp.directive('quizQuestion', function ($compile) {
 		restrict: "E",
 		link: linker,
 		scope: {
-			question: "="
+			question: "=",
+			key: "="
 		}
 	}
 });
 
-quizApp.directive('checkAnswer', function ($compile){
+quizApp.directive('checkAnswer', function ($compile, QuestionService){
+
+	var qIndex = '';
+
+	var getQuestionIndex = function() {
+		var activeElement = $('.user_select');
+		i = activeElement.attr('id').split("-")[1];
+		return i;
+	}
+
+	var linker = function (scpe, element, attrs){
+		element.on('click', function(e) {
+						
+			qIndex = getQuestionIndex();
+			qs = QuestionService;
+			if(qs.questions[qs.currentQuestion].answers[qIndex].correct === "true"){
+				console.log ("correct");
+			} else {
+				console.log("incorrect");
+			}
+			
+
+		});
+	}
 
 	return {
+		link: linker,
 		template: '<div class="answer_button disabled">Check Answer</div>'
 	}
 
@@ -74,16 +113,25 @@ quizApp.directive('answer', function ($compile){
 	}
 
 	var linker = function (scope, element, attrs) {
-		//type = scope.question.type;
+		
+		element.on('click', function(e) {
+			$('.answer_button').removeClass('disabled').addClass('active');
+			element.addClass('user_select');
+			element.siblings().removeClass('user_select');
+			$compile(element.contents())(scope);
+		});
+		
 		//element.html(getQuestionType(scope.question.type));
 	}
 
 	return {
-		template: '<li class="answer answer1"><span class="enumeration">{{ answer.text }}</span></li>',
+		replace: true,
 		restrict: "E",
+		template: '<li class="answer answer-{{ key }}" id="answer-{{ key }}"><span class="enumeration">{{ answer.text }}</span></li>',
 		link: linker,
 		scope: {
-			answer: "="
+			answer: "=",
+			key: "="
 		}
 	}
 });

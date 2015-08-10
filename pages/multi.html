@@ -5,7 +5,7 @@
 	</div>
 	<div id="answerImg"></div>
 	<ul class="answer_set">
-		<answer ng-repeat="a in question.answers" answer="a"></answer>
+		<answer ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer>
 	</ul>
 	<div class="feedback">
 		<div class="feedback_text feedback_hint">
