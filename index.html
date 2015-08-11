@@ -16,7 +16,7 @@
     <div ng-controller="mainController" class="widget_container">
         <ul>
             <!-- <quiz-question ng-repeat="(key, value) in questions" question="value" key="key"></quiz-question> -->
-            <quiz-question question="questions"></quiz-question>
+            <quiz-question question="question">{{question}}</quiz-question>
         </ul>
         <div class="interactions">
             <check-answer></check-answer>

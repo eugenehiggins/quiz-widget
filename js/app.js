@@ -7,67 +7,69 @@ var quizApp = angular.module('quizApp',[]);
 quizApp.service('QuestionService', function($http) {
 	console.log("service starts");
 
-	var currentQuestion = 0;
+	var self = this
 
-	this.getData = function() {
+	var currentQuestionId = 0;
+	var questions = [];
+
+	self.getData = function() {
 		return $http.get("model/questions.json");
 
 	}
 
-	this.getCurrentQuestion = function (){
-		return currentQuestion;
+	self.getCurrentQuestionId = function (){
+		return self.currentQuestionId;
 	}
 
-	
+	self.getQuestions = function () {
+		return self.questions;
+	}
+
+	self.getQuestion = function() {
+		return self.questions[self.currentQuestionId];
+	}
 
 	
 });
 
-//CONTROLLER
-quizApp.controller('mainController', function($scope, QuestionService, $http) {
-	var self = this;
 
-	$scope.questions = [];
-	var fetchQuestions = function () {
-		QuestionService.getData().
-		//$http.get("model/questions.json").
-		then(function (result) {
-			$scope.questions = result;
-			console.log(QuestionService.getCurrentQuestion());
-		}, function (result) {
-			console.log("error: " + result);
-		});
-	};
-
-	 fetchQuestions();
-
-})
 
 //DIRECTIVES
 quizApp.directive('quizQuestion', function ($compile, QuestionService) {
-	console.log('quiz question directive');
-	var trueFalseTemplate = '<li> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <li class="answer answer1"><span class="enumeration">True</span></li> <li class="answer answer1"><span class="enumeration">False</span></li> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
-	var multiTemplate = '<li id="question-{{ key }}"> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
 
 	var qs = QuestionService;
 	
-	var getTemplate = function(questionType) {
-		var template = '';
-		switch (questionType) {
-			case 'TorF':
-			case 'MC':
-				template = multiTemplate;
-
-				break;
-		}
-
-		return template;
-	}
+	
 
 	var linker = function (scope, element, attrs) {
-		console.log('qs: '+qs)
-		//element.html(getTemplate(qs.questions[qs.currentQuestion].question.type));
-		//$compile(element.contents())(scope);
+		scope.$on("Data_Ready", function(e){
+
+			var question = QuestionService.getQuestion();
+
+			var trueFalseTemplate = '<li> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <li class="answer answer1"><span class="enumeration">True</span></li> <li class="answer answer1"><span class="enumeration">False</span></li> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
+			var multiTemplate = '<li id="question-' + QuestionService.getCurrentQuestionId() + '"> <div class="question_stem"> <span>Question #</span> <p>' + question.text +'</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
+			
+			var getTemplate = function(questionType) {
+				var template = '';
+				switch (questionType) {
+					case 'TorF':
+					case 'MC':
+						template = multiTemplate;
+
+						break;
+				}
+
+				return template;
+			}
+
+			
+			console.log(element);
+			element.html(getTemplate(question.type));
+			$compile(element.contents())(scope);
+			
+		})
+		
+		
 	}
 
 	return {
@@ -147,3 +149,35 @@ quizApp.directive('answer', function ($compile){
 		}
 	}
 });
+
+//CONTROLLER
+quizApp.controller('mainController', function($scope, QuestionService, $http) {
+	var self = this;
+
+	var questions = [];
+
+	var qs = QuestionService;
+
+	console.log('controller runs');
+
+	var fetchQuestions = function () {
+		QuestionService.getData().
+		//$http.get("model/questions.json").
+		then(function (result) {
+			QuestionService.questions = result.data.questions;
+			
+			//console.log('scope question set');
+			QuestionService.currentQuestionId = 0;
+			
+			$scope.$broadcast("Data_Ready");
+			$scope.question = QuestionService.getQuestion();
+			console.log($scope.question);
+			
+		}, function (result) {
+			console.log("error: " + result);
+		});
+	};
+
+	 fetchQuestions();
+
+})
