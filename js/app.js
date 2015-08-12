@@ -4,7 +4,7 @@ var quizApp = angular.module('quizApp',[]);
 
 //SERVICES
 
-quizApp.service('QuestionService', function($http) {
+quizApp.service('QuestionService', ['$http','AnswerService', function($http, AnswerService) {
 
 	var self = this
 
@@ -27,8 +27,14 @@ quizApp.service('QuestionService', function($http) {
 	self.getQuestion = function() {
 		return self.questions[self.currentQuestionId];
 	}
+
+	self.getNextQuestion = function () {
+		self.currentQuestionId++;
+		AnswerService.setCurrentAnswer = '';
+		return self.getQuestion();
+	}
 	
-});
+}]);
 
 quizApp.service('AnswerService', function() {
 	var self = this;
@@ -37,7 +43,6 @@ quizApp.service('AnswerService', function() {
 	
 
 	self.setCurrentAnswer = function (element) {
-		console.log(element);
 		currentAnswer = element;
 	}
 
@@ -55,6 +60,8 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService) {
 		scope.$on("Data_Ready", function(e){
 
 			var question = QuestionService.getQuestion();
+
+			console.log(question);
 
 			var trueFalseTemplate = '<li> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <li class="answer answer1"><span class="enumeration">True</span></li> <li class="answer answer1"><span class="enumeration">False</span></li> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
 			//var multiTemplate = '<li id="question-' + QuestionService.getCurrentQuestionId() + '"> <div class="question_stem"> <span>Question #</span> <p>' + question.text +'</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
@@ -101,7 +108,7 @@ quizApp.directive('checkAnswer', function ($compile, QuestionService, AnswerServ
 		return i;
 	}
 
-	var linker = function (scpe, element, attrs){
+	var linker = function (scope, element, attrs){
 		var answerButton = element.children('#answer_button');
 
 			element.on('click', function(e) {
@@ -132,7 +139,13 @@ quizApp.directive('checkAnswer', function ($compile, QuestionService, AnswerServ
 						});
 						$('.feedback_incorrect').slideUp();
 						$('.feedback_correct').slideDown();
-						$('.active').text('Reset Question').addClass('reset');
+						$('#answer_button').text('Reset Question').addClass('reset');
+						$('#next_button')
+							.addClass('active')
+							.on('click', function(){
+								scope.question = qs.getNextQuestion();
+								scope.$broadcast("Data_Ready");
+							});
 					} else {
 						console.log("incorrect");
 						$('.user_select').addClass('incorrect');
@@ -184,7 +197,7 @@ quizApp.directive('answer', [ '$compile', 'AnswerService', function ($compile, A
 		
 		element.on('click', function(e) {
 			AnswerService.setCurrentAnswer(element.attr('id'));
-			$('.answer_button').removeClass('disabled').addClass('active');
+			$('#answer_button').removeClass('disabled').addClass('active');
 			element.addClass('user_select');
 			element.siblings().removeClass('user_select');
 			$compile(element.contents())(scope);
