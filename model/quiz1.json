@@ -1,0 +1,106 @@
+{
+"questions": [
+    {
+        "type": "MC",
+        "text": "In retaliation for the 1599 Acoma Revolt, Governor Juan de Oñate ordered",
+        "answers": [
+            {"text": "the complete destruction of Acoma Pueblo, including its buildings and people."},
+            {"text": "the imprisonment of a few key leaders of the revolt."},
+            {"text": "the mutilation of all Acoma men over the age of twenty-five.","correct":"true"},
+            {"text": "that no actions be taken for fear of further infuriating Pueblo peoples."}
+        ],
+        "feedbackCorrect": "<span>Yes </span> <p>That is correct</p>",
+        "feedbackIncorrect": "<span>Yes!> <p>No that is not correct</p>"
+    },
+    {
+        "type": "MC",
+        "text": "During the final push for New Mexico's statehood, officials in the U.S. Senate proposed a measure called jointure that would have",
+        "answers": [
+            {"text": "created a joint state out of New Mexico, Arizona, and Oklahoma territories."},
+            {"text": "combined New Mexico and Arizona into one large state called 'Montezuma.'","correct":"true"},
+            {"text": "divided New Mexico into two smaller states."},
+            {"text": "prevented New Mexico's statehood for another decade."}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "Hispano residents of New Mexico territory began to refer to themselves as 'Spanish Americans' in the late nineteenth century in order to",
+        "answers": [
+            {"text": "emphasize their white, Spanish ancestry and disassociate themselves with Mexican or indigenous heritage to appear more acceptable for statehood.","correct":"true"},
+            {"text": "qualify for land grants offered under the Homestead Act of 1862."},
+            {"text": "prevent the continued influx of Anglo Americans from the Eastern United States."},
+            {"text": "reestablish ties with the Spanish government that had once ruled the area."}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "In the early 1940s, directors of the Manhattan Project chose to locate their top-secret nuclear weapons program to ________, New Mexico due to its remote location and prior experience in the area.",
+        "answers": [
+            {"text": "Albuquerque"},
+            {"text": "Los Alamos","correct":"true"},
+            {"text": "Ruidoso"},
+            {"text": "Alamogordo"}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "__________ and __________ were two of the centers of Ancestral Puebloan (formerly Anasazi) culture during the period between 700 and 1200 CE.",
+        "answers": [
+            {"text": "Casas Grandes; Pecos Pueblo"},
+            {"text": "Third Mesa; Chaco Canyon"},
+            {"text": "Chaco Canyon; Mesa Verde","correct":"true"},
+            {"text": "Ohkay Owingeh; Kewa"}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "Following the U.S.-Mexico War, the process of surveying the new border between the United States and Mexico was complicated because",
+        "answers": [
+            {"text": "the Disturnell Map used by negotiators of the Treaty of Guadalupe Hidalgo was inaccurate and in 1849 the Rio Grande changed its course.","correct":"true"},
+            {"text": "border commissioners routinely became ill in the desert heat and were unable to complete their assignments."},
+            {"text": "the Treaty of Guadalupe Hidalgo was never ratified."},
+            {"text": "armed bandits and nomadic natives prevented the boundary commission from completing its task."}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "The Santa Fe Ring was",
+        "answers": [
+            {"text": "a criminal network comprised of petty thieves and bandits near Santa Fe."},
+            {"text": "a social club for former politicians."},
+            {"text": "a guild of Santa Fe jewelers."},
+            {"text": "a thinly veiled political machine directed by Thomas B. Catron.","correct":"true"}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "The Navajo Long Walk was planned by ___________ and orchestrated by _________.",
+        "answers": [
+            {"text": "Juan de Oñate; Antonio de Zaldivar"},
+            {"text": "Sheriff Pat Garrett; Billy the Kid"},
+            {"text": "James Henry Carleton; Christopher 'Kit' Carson","correct":"true"},
+            {"text": "Governor Clyde Tingley; Senator Dennis Chávez"}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "The Spanish-colonial 'casta' system was a means of",
+        "answers": [
+            {"text": "casting blame against those who had committed a crime."},
+            {"text": "identifying everyone in society based on their degree of limpieza de sangre, or the purity of their blood.","correct":"true"},
+            {"text": "defining the various branches of the colonial government."},
+            {"text": "differentiating between people who worked for governors, the Church, and encomenderos."}
+         ]
+    },
+    {
+        "type": "MC",
+        "text": "The name 'New Mexico' (Nuevo México) originated with the earliest Spanish explorers of the region, including members of the Coronado expedition, because they hoped to find",
+        "answers": [
+            {"text": "gold and riches comparable to those of the great Aztec Empire, the first Mexico.","correct":"true"},
+            {"text": "thousands of hostile indigenous peoples whom they would have to subjugate."},
+            {"text": "another great city like Tenochtitlan that had been constructed on a lake."},
+            {"text": "small, sedentary societies that could be integrated into the Spanish Empire."}
+         ]
+    }
+]
+}

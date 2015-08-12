@@ -5,7 +5,6 @@ var quizApp = angular.module('quizApp',[]);
 //SERVICES
 
 quizApp.service('QuestionService', function($http) {
-	console.log("service starts");
 
 	var self = this
 
@@ -13,7 +12,7 @@ quizApp.service('QuestionService', function($http) {
 	var questions = [];
 
 	self.getData = function() {
-		return $http.get("model/questions.json");
+		return $http.get("model/quiz1.json");
 
 	}
 
@@ -28,18 +27,29 @@ quizApp.service('QuestionService', function($http) {
 	self.getQuestion = function() {
 		return self.questions[self.currentQuestionId];
 	}
-
 	
 });
 
+quizApp.service('AnswerService', function() {
+	var self = this;
 
+	var currentAnswer = '';
+	
+
+	self.setCurrentAnswer = function (element) {
+		console.log(element);
+		currentAnswer = element;
+	}
+
+	self.getCurrentAnswer = function (element) {
+		return currentAnswer;
+	}
+})
 
 //DIRECTIVES
 quizApp.directive('quizQuestion', function ($compile, QuestionService) {
 
 	var qs = QuestionService;
-	
-	
 
 	var linker = function (scope, element, attrs) {
 		scope.$on("Data_Ready", function(e){
@@ -47,7 +57,8 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService) {
 			var question = QuestionService.getQuestion();
 
 			var trueFalseTemplate = '<li> <div class="question_stem"> <span>Question #</span> <p>{{ question.text }}</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <li class="answer answer1"><span class="enumeration">True</span></li> <li class="answer answer1"><span class="enumeration">False</span></li> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
-			var multiTemplate = '<li id="question-' + QuestionService.getCurrentQuestionId() + '"> <div class="question_stem"> <span>Question #</span> <p>' + question.text +'</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
+			//var multiTemplate = '<li id="question-' + QuestionService.getCurrentQuestionId() + '"> <div class="question_stem"> <span>Question #</span> <p>' + question.text +'</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct"> <span>That\'s Correct!</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> </div> </li>';
+			var multiTemplate = '<div class="question_stem"> <span>Question #</span> <p>' + question.text +'</p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct">' + question.feedbackCorrect +' </div> </div> <div class="interactions"> <check-answer></check-answer> <next-question></next-question><div class="help_buttons"> <span>Stuck?</span> <span class="help show_hint">Get a hint!</span>  </div> </div>';
 			
 			var getTemplate = function(questionType) {
 				var template = '';
@@ -61,14 +72,11 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService) {
 
 				return template;
 			}
-
 			
-			console.log(element);
 			element.html(getTemplate(question.type));
 			$compile(element.contents())(scope);
 			
 		})
-		
 		
 	}
 
@@ -82,40 +90,86 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService) {
 	}
 });
 
-quizApp.directive('checkAnswer', function ($compile, QuestionService){
+quizApp.directive('checkAnswer', function ($compile, QuestionService, AnswerService){
 
 	var qIndex = '';
 
 	var getQuestionIndex = function() {
+
 		var activeElement = $('.user_select');
 		i = activeElement.attr('id').split("-")[1];
 		return i;
 	}
 
 	var linker = function (scpe, element, attrs){
-		element.on('click', function(e) {
-						
-			qIndex = getQuestionIndex();
-			qs = QuestionService;
-			if(qs.questions[qs.currentQuestion].answers[qIndex].correct === "true"){
-				console.log ("correct");
-			} else {
-				console.log("incorrect");
-			}
-			
+		var answerButton = element.children('#answer_button');
 
-		});
+			element.on('click', function(e) {
+
+				if($(answerButton).text() === 'Reset Question') {
+					// do reset stuff
+
+				} else {
+
+					qIndex = getQuestionIndex();
+					
+					qs = QuestionService;
+					as = AnswerService;
+
+					$('.answer').addClass('disabled');
+				
+					if($(".active")[0] && qs.getQuestion().answers[qIndex].correct === "true"){
+						console.log ("correct");
+						$('body').off('click', '.answer');
+						$('.user_select')
+							.addClass('correct correct_answer')
+							.siblings().removeClass('incorrect');
+						$('.feedback .feedback_text').css("border-bottom" , "1px dotted #d3d3d3");
+						$('.feedback .feedback_correct span').css({
+							"color" : "#66ae3d",
+						    "display" : "inline-block",
+						    "margin-bottom" : "5px"
+						});
+						$('.feedback_incorrect').slideUp();
+						$('.feedback_correct').slideDown();
+						$('.active').text('Reset Question').addClass('reset');
+					} else {
+						console.log("incorrect");
+						$('.user_select').addClass('incorrect');
+						$('.feedback .feedback_incorrect span').css({
+							"color" : "#e33826",
+						    "display" : "inline-block",
+						    "margin-bottom" : "5px",
+						    "overflow" : "hidden"
+						});
+						$('.feedback_incorrect').slideDown();
+					}
+				}	
+
+			});
 	}
 
 	return {
 		link: linker,
-		template: '<div class="answer_button disabled">Check Answer</div>'
+		template: '<div class="answer_button disabled" id="answer_button">Check Answer</div>'
 	}
 
 
 });
 
-quizApp.directive('answer', function ($compile){
+quizApp.directive('nextQuestion', function ($compile, QuestionService, AnswerService){
+
+	var linker = function () {
+
+	}
+
+	return {
+		link: linker,
+		template: '<div class="answer_button" id="next_button">Next Question</div>'
+	}
+});
+
+quizApp.directive('answer', [ '$compile', 'AnswerService', function ($compile, AnswerService){
 
 	var type = '';
 
@@ -129,6 +183,7 @@ quizApp.directive('answer', function ($compile){
 	var linker = function (scope, element, attrs) {
 		
 		element.on('click', function(e) {
+			AnswerService.setCurrentAnswer(element.attr('id'));
 			$('.answer_button').removeClass('disabled').addClass('active');
 			element.addClass('user_select');
 			element.siblings().removeClass('user_select');
@@ -148,7 +203,7 @@ quizApp.directive('answer', function ($compile){
 			key: "="
 		}
 	}
-});
+}]);
 
 //CONTROLLER
 quizApp.controller('mainController', function($scope, QuestionService, $http) {
@@ -158,20 +213,16 @@ quizApp.controller('mainController', function($scope, QuestionService, $http) {
 
 	var qs = QuestionService;
 
-	console.log('controller runs');
-
 	var fetchQuestions = function () {
 		QuestionService.getData().
 		//$http.get("model/questions.json").
 		then(function (result) {
 			QuestionService.questions = result.data.questions;
 			
-			//console.log('scope question set');
 			QuestionService.currentQuestionId = 0;
 			
 			$scope.$broadcast("Data_Ready");
 			$scope.question = QuestionService.getQuestion();
-			console.log($scope.question);
 			
 		}, function (result) {
 			console.log("error: " + result);
