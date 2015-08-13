@@ -4,7 +4,8 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   border: 0;
   font-size: 100%;
   vertical-align: baseline;
-  overflow: hidden; }
+  overflow: hidden; 
+}
 
 html {
   line-height: 1;
@@ -50,6 +51,10 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 * {
   box-sizing: border-box; }
+.widget_container {
+  height: 650px;
+  width: 100%;
+}
 
 .question_stem {
   font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
