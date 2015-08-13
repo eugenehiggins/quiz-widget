@@ -1,0 +1,27 @@
+{
+"questions": [
+    {
+        "type": "MC",
+        "text": "In retaliation for the 1599 Acoma Revolt, Governor Juan de Oñate ordered",
+        "answers": [
+            {"text": "the complete destruction of Acoma Pueblo, including its buildings and people."},
+            {"text": "the imprisonment of a few key leaders of the revolt."},
+            {"text": "the mutilation of all Acoma men over the age of twenty-five.","correct":"true"},
+            {"text": "that no actions be taken for fear of further infuriating Pueblo peoples."}
+        ],
+        "feedbackCorrect": "<span>Yes </span> <p>That is correct</p>",
+        "feedbackIncorrect": "<span>Yes!> <p>No that is not correct</p>"
+    },
+    {
+        "type": "MC",
+        "text": "During the final push for New Mexico's statehood, officials in the U.S. Senate proposed a measure called jointure that would have",
+        "answers": [
+            {"text": "created a joint state out of New Mexico, Arizona, and Oklahoma territories."},
+            {"text": "combined New Mexico and Arizona into one large state called 'Montezuma.'","correct":"true"},
+            {"text": "divided New Mexico into two smaller states."},
+            {"text": "prevented New Mexico's statehood for another decade."}
+         ]
+    }
+    
+]
+}
