@@ -93,8 +93,7 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService, $rootScop
 			scope.question = QuestionService.getQuestion();
 			
 			var multiTemplate = '<div class="question_stem" ng-model="question"> <span>Question #</span> <p>' + scope.question.text+' </p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct">' + scope.question.feedbackCorrect +' </div> </div> <div class="interactions"> <check-answer></check-answer> <next-question></next-question></div>';
-			var scoreTemplate = '<div class="question_stem" ng-model="question"> You are done! Your score is ' + scope.question.score + ' </div><try-again></try-again>';
-
+			var scoreTemplate = '<div class=" score_circle" ng-model="question"> Your score is ' + scope.question.score + ' </div><try-again></try-again>';
 
 			var getTemplate = function(questionType) {
 				var template = '';
@@ -160,6 +159,10 @@ quizApp.directive('checkAnswer', function ($compile, QuestionService, AnswerServ
 
 					$('.answer').addClass('disabled');
 					$('.answer').off('click');
+
+					if (qs.getCurrentQuestionId() + 1 >= qs.getQuestions().length) {
+							$('#next_button').text('Finish');
+					}
 				
 					if($(".active")[0] && qs.getQuestion().answers[qIndex].correct === "true"){
 						
@@ -181,6 +184,13 @@ quizApp.directive('checkAnswer', function ($compile, QuestionService, AnswerServ
 
 						// update the score
 						qs.incrementScore();
+
+						console.log(qs.getCurrentQuestionId())
+						console.log(qs.getQuestions().length)
+
+						if (qs.getCurrentQuestionId() + 1 >= qs.getQuestions().length) {
+							$('#next_button').text('Finish');
+						}
 
 						$('#next_button')
 							.addClass('active')

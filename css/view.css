@@ -282,3 +282,20 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   background-color: #00a7ce;
   border-radius: 2px;
   color: #ffffff; }
+
+.score_circle {
+  margin: 100px auto 0 auto;
+  background-color: #00a7ce;
+  display: block;
+  height: 300px;
+  width: 300px;
+  line-height: 300px;
+
+  -moz-border-radius: 150px; /* or 50% */
+  border-radius: 150px; /* or 50% */
+
+  font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+  color: white;
+  text-align: center;
+  font-size: 2.5em;
+}
