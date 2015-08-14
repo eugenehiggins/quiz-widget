@@ -37,6 +37,7 @@ quizApp.service('QuestionService', ['$http','AnswerService', '$rootScope', funct
 
 	self.getQuestion = function() {
 		if(self.quizDone == false){
+console.log('quizDone='+self.quizDone)
 			self.q = self.questions[self.currentQuestionId];
 			return self.q;
 		} else {
@@ -49,12 +50,21 @@ quizApp.service('QuestionService', ['$http','AnswerService', '$rootScope', funct
 
 	self.getNextQuestion = function () {
 		
-			self.currentQuestionId += 1;
-			//AnswerService.setCurrentAnswer = '';
-			$rootScope.$broadcast('qId:changed')
-			return self.getQuestion();
+		self.currentQuestionId += 1;
+		//AnswerService.setCurrentAnswer = '';
+		$rootScope.$broadcast('qId:changed')
+		return self.getQuestion();
 
 	}
+
+	self.resetQuestions = function () {
+
+		self.currentQuestionId = 0;
+		self.score = 0;
+		self.quizDone = false;
+		$rootScope.$broadcast('qId:changed');
+		return self.getQuestion();
+	};
 	
 }]);
 
@@ -83,8 +93,8 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService, $rootScop
 			$rootScope.$broadcast('compile_answer');
 			scope.question = QuestionService.getQuestion();
 			
-			var multiTemplate = '<div class="question_stem" ng-model="question"> <span>Question #</span> <p>' + scope.question.text+' </p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct">' + scope.question.feedbackCorrect +' </div> </div> <div class="interactions"> <check-answer></check-answer> <next-question></next-question><div class="help_buttons"> <span>Stuck?</span> <span class="help show_hint">Get a hint!</span>  </div> </div>';
-			var scoreTemplate = '<div class="question_stem" ng-model="question"> You are done! Your score is ' + scope.question.score + ' </div>';
+			var multiTemplate = '<div class="question_stem" ng-model="question"> <span>Question #</span> <p>' + scope.question.text+' </p> </div> <div id="answerImg"></div> <ul class="answer_set"> <answer ng-model="question" ng-repeat="(key, value) in question.answers" answer="value" key="key"></answer> </ul> <div class="feedback"> <div class="feedback_text feedback_hint"> <span>Hint</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_incorrect"> <span>Not Quite</span> <p>Cras mattis consectetur purus sit amet fermentum. Vestibulum id ligula porta felis euismod semper.</p> </div> <div class="feedback_text feedback_correct">' + scope.question.feedbackCorrect +' </div> </div> <div class="interactions"> <check-answer></check-answer> <next-question></next-question></div>';
+			var scoreTemplate = '<div class="question_stem" ng-model="question"> You are done! Your score is ' + scope.question.score + ' </div><try-again></try-again>';
 
 
 			var getTemplate = function(questionType) {
@@ -96,12 +106,13 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService, $rootScop
 						break;
 					case 'DONE':
 						template = scoreTemplate;
+						$('#try_again_button').show().addClass('active');
 						break;
 				}
 
 				return template;
 			}
-
+console.log(scope.question.type);
 			element.html(getTemplate(scope.question.type));
 			$compile(element.contents())(scope);
 
@@ -222,6 +233,27 @@ quizApp.directive('nextQuestion', function ($compile, QuestionService, AnswerSer
 	return {
 		link: linker,
 		template: '<div class="answer_button" id="next_button">Next Question</div>'
+	}
+});
+
+quizApp.directive('tryAgain', function ($compile, QuestionService, AnswerService){
+
+	var linker = function (scope, element, attrs) {
+		var qs = QuestionService;
+
+		//$('#try_again_button').hide();
+		
+		element.on('click', function(){
+			scope.question = qs.resetQuestions();
+			//console.log("----")
+			//console.log(scope.$parent);
+		});
+	}
+
+	return {
+		replace: true,
+		link: linker,
+		template: '<div class="interactions"><div class="answer_button active" id="try_again_button">Try Again</div></div>'
 	}
 });
 
