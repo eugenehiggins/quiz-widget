@@ -37,7 +37,6 @@ quizApp.service('QuestionService', ['$http','AnswerService', '$rootScope', funct
 
 	self.getQuestion = function() {
 		if(self.quizDone == false){
-console.log('quizDone='+self.quizDone)
 			self.q = self.questions[self.currentQuestionId];
 			return self.q;
 		} else {
@@ -112,7 +111,7 @@ quizApp.directive('quizQuestion', function ($compile, QuestionService, $rootScop
 
 				return template;
 			}
-console.log(scope.question.type);
+
 			element.html(getTemplate(scope.question.type));
 			$compile(element.contents())(scope);
 
@@ -160,10 +159,12 @@ quizApp.directive('checkAnswer', function ($compile, QuestionService, AnswerServ
 					as = AnswerService;
 
 					$('.answer').addClass('disabled');
+					$('.answer').off('click');
 				
 					if($(".active")[0] && qs.getQuestion().answers[qIndex].correct === "true"){
 						
 						// THE ANSWER IS CORRECT
+						$('#answer_button').hide();
 						$('body').off('click', '.answer');
 						$('.user_select')
 							.addClass('correct correct_answer')
@@ -225,8 +226,7 @@ quizApp.directive('nextQuestion', function ($compile, QuestionService, AnswerSer
 				qs.setQuizDone();
 			}
 			scope.question = qs.getNextQuestion();
-			//console.log("----")
-			//console.log(scope.$parent);
+
 		});
 	}
 
@@ -245,8 +245,7 @@ quizApp.directive('tryAgain', function ($compile, QuestionService, AnswerService
 		
 		element.on('click', function(){
 			scope.question = qs.resetQuestions();
-			//console.log("----")
-			//console.log(scope.$parent);
+
 		});
 	}
 
@@ -260,12 +259,14 @@ quizApp.directive('tryAgain', function ($compile, QuestionService, AnswerService
 quizApp.directive('answer', [ '$compile', 'AnswerService', function ($compile, AnswerService){
 
 	var linker = function (scope, element, attrs) {
+
 	element.on('click', function(e) {
 		AnswerService.setCurrentAnswer(element.attr('id'));
 		$('#answer_button').removeClass('disabled').addClass('active');
 		element.addClass('user_select');
 		element.siblings().removeClass('user_select incorrect');
 		$('.feedback_text').slideUp();
+		
 		$compile(element.contents())(scope);
 	});
 
@@ -289,7 +290,7 @@ quizApp.directive('answer', [ '$compile', 'AnswerService', function ($compile, A
 }]);
 
 //CONTROLLER
-quizApp.controller('mainController', function($scope, QuestionService, $http) {
+quizApp.controller('mainController',['$scope','QuestionService','$http', function($scope, QuestionService, $http) {
 
 	var self = this;
 
@@ -319,4 +320,4 @@ quizApp.controller('mainController', function($scope, QuestionService, $http) {
  		$scope.$broadcast("Data_Ready");
 	});
 
-})
+}])
